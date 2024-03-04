@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "third_party", "third_party", "{E49BD79B-19E2-4979-8FBA-0C2298E002F0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assimp", "assimp", "{0156E439-A169-4A0E-AC31-200AD5523B45}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "contrib", "contrib", "{DD215B32-ABA5-43CA-99D5-F34F45E67740}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "zlib", "zlib", "{C9152353-6FE2-4BA1-80DF-0CAF0E30E483}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "contrib", "contrib", "{8A1D4464-4AA0-40A0-97E2-F519EFEC4BE9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotzlib", "dotzlib", "{6D0CE7CB-1A7C-4D35-909B-3021DC87E861}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotZLib", "third_party\assimp\contrib\zlib\contrib\dotzlib\DotZLib\DotZLib.csproj", "{2E72FD3C-9844-49D7-B12D-58CA0D43FEAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E72FD3C-9844-49D7-B12D-58CA0D43FEAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E72FD3C-9844-49D7-B12D-58CA0D43FEAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E72FD3C-9844-49D7-B12D-58CA0D43FEAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E72FD3C-9844-49D7-B12D-58CA0D43FEAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0156E439-A169-4A0E-AC31-200AD5523B45} = {E49BD79B-19E2-4979-8FBA-0C2298E002F0}
+		{DD215B32-ABA5-43CA-99D5-F34F45E67740} = {0156E439-A169-4A0E-AC31-200AD5523B45}
+		{C9152353-6FE2-4BA1-80DF-0CAF0E30E483} = {DD215B32-ABA5-43CA-99D5-F34F45E67740}
+		{8A1D4464-4AA0-40A0-97E2-F519EFEC4BE9} = {C9152353-6FE2-4BA1-80DF-0CAF0E30E483}
+		{6D0CE7CB-1A7C-4D35-909B-3021DC87E861} = {8A1D4464-4AA0-40A0-97E2-F519EFEC4BE9}
+		{2E72FD3C-9844-49D7-B12D-58CA0D43FEAB} = {6D0CE7CB-1A7C-4D35-909B-3021DC87E861}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF1D6FB4-4B48-4453-98B8-A803BD95CFBF}
+	EndGlobalSection
+EndGlobal
