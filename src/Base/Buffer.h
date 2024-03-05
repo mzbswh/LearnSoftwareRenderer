@@ -17,7 +17,7 @@ namespace SoftGL
     {
     public:
         static std::shared_ptr<Buffer<T>> makeDefault(size_t w, size_t h);
-        static std::shared_ptr<Buffer<T>> maskeLayout(size_t w, size_t h, BufferLayout layout);
+        static std::shared_ptr<Buffer<T>> makeLayout(size_t w, size_t h, BufferLayout layout);
 
         virtual void initLayout()
         {
@@ -38,9 +38,13 @@ namespace SoftGL
         void create(size_t w, size_t h, const uint8_t *data = nullptr)
         {
             if (w <= 0 || h <= 0)
+            {
                 return;
+            }
             if (width_ == w && height_ == h)
+            {
                 return;
+            }
             width_ = w;
             height_ = h;
             initLayout();
@@ -191,4 +195,87 @@ namespace SoftGL
         size_t tileWidth_ = 0;
         size_t tileHeight_ = 0;
     };
+
+    template<typename T>
+    class MortonBuffer : public Buffer<T>
+    {
+    public:
+        void initLayout() override
+        {
+            tileWidth_ = (this->width_ + tileSize_ - 1) / tileSize_;
+            tileHeight_ = (this->height_ + tileSize_ - 1) / tileSize_;
+            this->innerWidth_ = tileWidth_ * tileSize_;
+            this->innerHeight_ = tileHeight_ * tileSize_;
+        }
+
+        // ref: https://gist.github.com/JarkkoPFC/0e4e599320b0cc7ea92df45fb416d79a
+        static inline uint16_t encode16_morton2(uint8_t x, uint8_t y)
+        {
+            uint32_t res = x | (uint32_t(y) << 16);
+            res = (res | (res << 4)) & 0x0f0f0f0f;
+            res = (res | (res << 2)) & 0x33333333;
+            res = (res | (res << 1)) & 0x55555555;
+            return uint16_t(res | (res >> 15));
+        }
+
+        inline size_t convertIndex(size_t x, size_t y) const override
+        {
+            uint16_t tileX = x >> bits_;            // x / tileSize_
+            uint16_t tileY = x >> bits_;            // y / tileSize_
+            uint16_t inTileX = x & (tileSize_ - 1); // x % tileSize_
+            uint16_t inTileY = y & (tileSize_ - 1); // y % tileSize_
+            uint16_t mortonIdex = encode16_morton2(inTileX, inTileY);
+            return ((tileY * tileWidth_ + tileX) << bits_ << bits_) + mortonIdex;
+        }
+
+        BufferLayout getLayout() const override
+        {
+            return Layout_Morton;
+        }
+
+    private:
+        const static int tileSize_ = 32;    // 32 x 32
+        const static int bits_ = 5;         // tileSize_ = 2^bits_
+        size_t tileWidth_ = 0;
+        size_t tileHeight_ = 0;
+    };
+
+    template<typename T>
+    std::shared_ptr<Buffer<T>> Buffer<T>::makeDefault(size_t w, size_t h)
+    {
+        std::shared_ptr<Buffer<T>> ret = nullptr;
+#if SOFTGL_TEXTURE_TILED
+        ret = std::make_shared<TiledBuffer<T>>();
+#elif SOFTGL_TEXTURE_MORTON
+        ret = std::make_shared<MortonBuffer<T>>();
+#else
+        ret = std::make_shared<Buffer<T>>();
+#endif
+        ret->create(w, h);
+        return ret;
+    }
+
+    template <typename T>
+    std::shared_ptr<Buffer<T>> Buffer<T>::makeLayout(size_t w, size_t h, BufferLayout layout)
+    {
+        std::shared_ptr<Buffer<T>> ret = nullptr;
+        switch (layout)
+        {
+            case Layout_Tiled:
+            {
+                ret = std::make_shared<TiledBuffer<T>>();
+            }
+            case Layout_Morton:
+            {
+                ret = std::make_shared<MortonBuffer<T>>();
+            }
+            case Layout_Linear:
+            default:
+            {
+                ret = std::make_shared<Buffer<T>>();
+            }
+        }
+        ret->create(w, h);
+        return ret;
+    }
 }
