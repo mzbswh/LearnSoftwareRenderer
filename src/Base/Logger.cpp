@@ -24,7 +24,10 @@ namespace SoftGL
     void Logger::log(LogLevel level, const char *file, int line, const char *message, ...)
     {
         std::lock_guard<std::mutex> lock_guard(mutex_);
-        if (level < minLevel_) return;
+        if (level < minLevel_)
+        {
+            return;
+        }
         va_list argPtr;
         va_start(argPtr, message);
         vsnprintf(buf_, MAX_lOG_LENGTH - 1, message, argPtr);
