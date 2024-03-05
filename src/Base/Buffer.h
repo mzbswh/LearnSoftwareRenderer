@@ -158,4 +158,37 @@ namespace SoftGL
         std::shared_ptr<T> data_ = nullptr;
         size_t dataSize_ = 0;
     };
+
+    template<typename T>
+    class TiledBuffer : public Buffer<T>
+    {
+    public:
+        void initLayout() override
+        {
+            tileWidth_ = (this->width_ + tileSize_ - 1) / tileSize_;
+            tileHeight_ = (this->height_ + tileSize_ - 1) / tileSize_;
+            this->innerWidth_ = tileWidth_ * tileSize_;
+            this->innerHeight_ = tileHeight_ * tileSize_;
+        }
+
+        inline size_t convertIndex(size_t x, size_t y) const override
+        {
+            uint16_t tileX = x >> bits_;            // x / tileSize_
+            uint16_t tileY = y >> bits_;            // y / tileSize_
+            uint16_t inTileX = x & (tileSize_ - 1); // x % tileSize_
+            uint16_t inTileY = y & (tileSize_ - 1); // y % tileSize_
+            return ((tileY * tileWidth_ + tileX) << bits_ << bits_) + (inTileY << bits_) + inTileX;
+        }
+
+        BufferLayout getLayout() const override
+        {
+            return Layout_Tiled;
+        }
+
+    private:
+        const static int tileSize_ = 4; // 4 x 4
+        const static int bits_ = 2;     // tileSize_ = 2^bits_
+        size_t tileWidth_ = 0;
+        size_t tileHeight_ = 0;
+    };
 }
