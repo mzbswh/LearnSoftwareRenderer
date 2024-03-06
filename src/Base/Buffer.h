@@ -15,7 +15,7 @@ namespace SoftGL
     template <typename T>
     class Buffer
     {
-    public:
+     public:
         static std::shared_ptr<Buffer<T>> makeDefault(size_t w, size_t h);
         static std::shared_ptr<Buffer<T>> makeLayout(size_t w, size_t h, BufferLayout layout);
 
@@ -154,7 +154,7 @@ namespace SoftGL
             }
         }
 
-    protected:
+     protected:
         size_t width_ = 0;
         size_t height_ = 0;
         size_t innerWidth_ = 0;
@@ -166,7 +166,7 @@ namespace SoftGL
     template<typename T>
     class TiledBuffer : public Buffer<T>
     {
-    public:
+     public:
         void initLayout() override
         {
             tileWidth_ = (this->width_ + tileSize_ - 1) / tileSize_;
@@ -189,7 +189,7 @@ namespace SoftGL
             return Layout_Tiled;
         }
 
-    private:
+     private:
         const static int tileSize_ = 4; // 4 x 4
         const static int bits_ = 2;     // tileSize_ = 2^bits_
         size_t tileWidth_ = 0;
@@ -199,7 +199,7 @@ namespace SoftGL
     template<typename T>
     class MortonBuffer : public Buffer<T>
     {
-    public:
+     public:
         void initLayout() override
         {
             tileWidth_ = (this->width_ + tileSize_ - 1) / tileSize_;
@@ -233,7 +233,7 @@ namespace SoftGL
             return Layout_Morton;
         }
 
-    private:
+     private:
         const static int tileSize_ = 32;    // 32 x 32
         const static int bits_ = 5;         // tileSize_ = 2^bits_
         size_t tileWidth_ = 0;

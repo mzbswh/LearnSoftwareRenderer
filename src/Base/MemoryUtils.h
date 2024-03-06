@@ -10,7 +10,7 @@ namespace SoftGL
 {
     class MemoryUtils
     {
-    public:
+     public:
         static void *alignedMalloc(size_t size, size_t alignment = SOFTGL_ALIGNMENT)
         {
             if ((alignment & (alignment - 1)) != 0) // alignment需要是2的n次方
