@@ -61,9 +61,7 @@ namespace SoftGL
 
     bool BoundingBox::intersects(const BoundingBox &box) const
     {
-        return ((min.x >= box.min.x && min.x <= box.max.x) || (box.min.x >= min.x && box.min.x <= max.x))
-            && ((min.y >= box.min.y && min.y <= box.max.y) || (box.min.y >= min.y && box.min.y <= max.y))
-            && ((min.z >= box.min.z && min.z <= box.max.z) || (box.min.z >= min.z && box.min.z <= max.z));
+        return ((min.x >= box.min.x && min.x <= box.max.x) || (box.min.x >= min.x && box.min.x <= max.x)) && ((min.y >= box.min.y && min.y <= box.max.y) || (box.min.y >= min.y && box.min.y <= max.y)) && ((min.z >= box.min.z && min.z <= box.max.z) || (box.min.z >= min.z && box.min.z <= max.z));
     }
 
     void BoundingBox::merge(const BoundingBox &box)
@@ -75,17 +73,76 @@ namespace SoftGL
         max.y = std::max(max.y, box.max.y);
         max.z = std::max(max.z, box.max.z);
     }
-    
+
     /*************Plane***************/
 
     /*
-     * see: 
+     * 平面包围盒相交判断
+     * see:
      * https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
      * https://what-when-how.com/advanced-methods-in-computer-graphics/collision-detection-advanced-methods-in-computer-graphics-part-3/
      * https://zhuanlan.zhihu.com/p/156750299
      */
     Plane::PlaneIntersects Plane::intersects(const BoundingBox &box) const
     {
-
+        glm::vec3 center = (box.min + box.max) * 0.5f; // 包围盒中心
+        glm::vec3 extent = (box.max - box.min) * 0.5f; // 包围盒半长
+        float d = distance(center);
+        float r = fabsf(extent.x * normal_.x) + fabsf(extent.y * normal_.y) + fabsf(extent.z * normal_.z);
+        if (d == r) // 相切
+        {
+            return Plane::Intersects_Tangent;
+        }
+        else if (std::abs(d) < r)
+        {
+            return Plane::Intersects_Cross;
+        }
+        return (d > 0.0f) ? Plane::Intersects_Front : Plane::Intersects_Back;
     }
+
+    // 平面与点相交判断
+    Plane::PlaneIntersects Plane::intersects(const glm::vec3 &p0) const
+    {
+        float d = distance(p0);
+        if (d == 0)
+        {
+            return Plane::Intersects_Tangent;
+        }
+        return (d > 0.0f) ? Plane::Intersects_Front : Plane::Intersects_Back;
+    }
+
+    // 平面与线段相交判断
+    Plane::PlaneIntersects Plane::intersects(const glm::vec3 &p0, const glm::vec3 &p1) const
+    {
+        Plane::PlaneIntersects state0 = intersects(p0);
+        Plane::PlaneIntersects state1 = intersects(p1);
+        if (state0 == state1)
+        {
+            return state0;
+        }
+        if (state0 == Plane::Intersects_Tangent || state1 == Plane::Intersects_Tangent)
+        {
+            return Plane::Intersects_Tangent;
+        }
+        return Plane::Intersects_Cross;
+    }
+
+    // 平面与三角形相交判断
+    Plane::PlaneIntersects Plane::intersects(const glm::vec3 &p0, const glm::vec3 &p1, const glm::vec3 &p2) const
+    {
+        Plane::PlaneIntersects state0 = intersects(p0, p1);
+        Plane::PlaneIntersects state1 = intersects(p0, p2);
+        Plane::PlaneIntersects state2 = intersects(p1, p2);
+        if (state0 == state1 == state2)
+        {
+            return state0;
+        }
+        if (state0 == Plane::Intersects_Cross || state1 == Plane::Intersects_Cross || state2 == Plane::Intersects_Cross)
+        {
+            return Plane::Intersects_Cross;
+        }
+        return Plane::Intersects_Tangent;
+    }
+
+    /*************Frustum(截锥体)***************/
 }
