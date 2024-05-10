@@ -145,4 +145,52 @@ namespace SoftGL
     }
 
     /*************Frustum(截锥体)***************/
+
+    bool Frustum::intersects(const BoundingBox &box) const
+    {
+        for (auto &plane : planes)
+        {
+            if (plane.intersects(box) == Plane::Intersects_Back)
+            {
+                return false;
+            }
+        }
+        return bbox.intersects(box);
+    }
+
+    bool Frustum::intersects(const glm::vec3 &p0) const
+    {
+        for (auto &plane : planes)
+        {
+            if (plane.intersects(p0) == Plane::Intersects_Back)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool Frustum::intersects(const glm::vec3 &p0, const glm::vec3 &p1) const
+    {
+        for (auto &plane : planes)
+        {
+            if (plane.intersects(p0, p1) == Plane::Intersects_Back)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool Frustum::intersects(const glm::vec3 &p0, const glm::vec3 &p1, const glm::vec3 &p2) const
+    {
+        for (auto &plane : planes)
+        {
+            if (plane.intersects(p0, p1, p2) == Plane::Intersects_Back)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 }
