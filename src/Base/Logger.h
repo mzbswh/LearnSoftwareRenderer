@@ -28,10 +28,10 @@ namespace SoftGL
     {
      public:
         static void setLogFunc(void *ctx, LogFunc func);
-            static void setLogLevel(LogLevel level);
-            static void log(LogLevel level, const char *file, int line, const char *message, ...);
+        static void setLogLevel(LogLevel level);
+        static void log(LogLevel level, const char *file, int line, const char *message, ...);
 
-     private:
+    private:
         static void *logContext_;
         static LogFunc logFunc_;
         static LogLevel minLevel_;
