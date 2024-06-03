@@ -6,54 +6,54 @@ namespace SoftGL
 {
     enum DepthFunction
     {
-        DepthFunc_Never,
-        DepthFunc_Less,
-        DepthFunc_Equal,
-        DepthFunc_LEqual,
-        DepthFunc_Greater,
-        DepthFunc_NEqual,
-        DepthFunc_GEqual,
-        DepthFunc_Always,
+        DepthFunc_NEVER,
+        DepthFunc_LESS,
+        DepthFunc_EQUAL,
+        DepthFunc_LEQUAL,
+        DepthFunc_GREATER,
+        DepthFunc_NOTEQUAL,
+        DepthFunc_GEQUAL,
+        DepthFunc_ALWAYS,
     };
 
     enum BlendFactor
     {
-        BlendFactor_Zero,
-        BlendFactor_One,
-        BlendFactor_Src_Color,
-        BlendFactor_Src_Alpha,
-        BlendFactor_Dst_Color,
-        BlendFactor_Dst_Aplha,
-        BlendFactor_One_Minus_Src_Color,
-        BlendFactor_One_Minus_Src_Alpha,
-        BlendFactor_One_Minus_Dst_Color,
-        BlendFactor_One_Minus_Dst_Alpha,
+        BlendFactor_ZERO,
+        BlendFactor_ONE,
+        BlendFactor_SRC_COLOR,
+        BlendFactor_SRC_ALPHA,
+        BlendFactor_DST_COLOR,
+        BlendFactor_DST_ALPHA,
+        BlendFactor_ONE_MINUS_SRC_COLOR,
+        BlendFactor_ONE_MINUS_SRC_ALPHA,
+        BlendFactor_ONE_MINUS_DST_COLOR,
+        BlendFactor_ONE_MINUS_DST_ALPHA,
     };
 
     enum BlendFunction
     {
-        BlendFunc_Add,
-        BlendFunc_Subtract,
-        BlendFunc_Reverse_Subtract,
-        BlendFunc_Min,
-        BlendFunc_Max,
+        BlendFunc_ADD,
+        BlendFunc_SUBTRACT,
+        BlendFunc_REVERSE_SUBTRACT,
+        BlendFunc_MIN,
+        BlendFunc_MAX,
     };
 
     enum PolygonMode
     {
-        PolygonMode_Point,
-        PolygonMode_Line,
-        PolygonMode_Fill,
+        PolygonMode_POINT,
+        PolygonMode_LINE,
+        PolygonMode_FILL,
     };
 
     struct BlendParameters
     {
-        BlendFunction blendFuncRgb = BlendFunc_Add;
-        BlendFactor blendSrcRgb = BlendFactor_One;
-        BlendFactor blendDstRgb = BlendFactor_Zero;
-        BlendFunction blendFuncAlphs = BlendFunc_Add;
-        BlendFactor blendSrcAlpha = BlendFactor_One;
-        BlendFactor blendDstAlpha = BlendFactor_Zero;
+        BlendFunction blendFuncRgb = BlendFunc_ADD;
+        BlendFactor blendSrcRgb = BlendFactor_ONE;
+        BlendFactor blendDstRgb = BlendFactor_ZERO;
+        BlendFunction blendFuncAlphs = BlendFunc_ADD;
+        BlendFactor blendSrcAlpha = BlendFactor_ONE;
+        BlendFactor blendDstAlpha = BlendFactor_ZERO;
 
         void SetBlendFactor(BlendFactor src, BlendFactor dst)
         {
@@ -72,9 +72,9 @@ namespace SoftGL
 
     enum PrimitiveType
     {
-        Primitive_Point,
-        Primitive_Line,
-        Primitive_Triangle,
+        Primitive_POINT,
+        Primitive_LINE,
+        Primitive_TRIANGLE,
     };
 
     struct RenderStates
@@ -84,11 +84,11 @@ namespace SoftGL
 
         bool depthTest = false;
         bool depthMask = true;
-        DepthFunction depthFunc = DepthFunc_Less;
+        DepthFunction depthFunc = DepthFunc_LESS;
 
         bool cullFace = false;
-        PrimitiveType primitiveType = Primitive_Triangle;
-        PolygonMode polygonMode = PolygonMode_Fill;
+        PrimitiveType primitiveType = Primitive_TRIANGLE;
+        PolygonMode polygonMode = PolygonMode_FILL;
 
         float lineWidth = 1.f;
     };
