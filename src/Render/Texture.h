@@ -80,7 +80,7 @@ namespace SoftGL
         TextureType type = TextureType_2D;
         TextureFormat format = TextureFormat_RGBA8;
         uint32_t usage = TextureUsage_Sampler;
-        bool ussMipmaps = false;
+        bool useMipmaps = false;
         bool multiSample = false;
         std::string tag;
     };
