@@ -9,7 +9,7 @@ namespace SoftGL
     class VertexArrayObject
     {
     public:
-        virtual int getId() = 0;
+        virtual int getId() const = 0;
         virtual void updateVertexData(void *data, size_t length) = 0;
     };
 
