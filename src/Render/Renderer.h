@@ -29,6 +29,9 @@ namespace SoftGL
         // texture
         virtual std::shared_ptr<Texture> createTexture(const TextureDesc &desc) = 0;
 
+        // vertex
+        virtual std::shared_ptr<VertexArrayObject> createVertexArrayObject(const VertexArray &vertexArray) = 0;
+
         // shader program
         virtual std::shared_ptr<ShaderProgram> createShaderProgram() = 0;
 
