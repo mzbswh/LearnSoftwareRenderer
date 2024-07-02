@@ -21,7 +21,7 @@ namespace SoftGL
         // pipeline states
         virtual std::shared_ptr<PipelineStates> createPipelineStates(const RenderStates &renderStates) = 0;
         // uniform
-        virtual std::shared_ptr<UniformBlock> createUnifromBlock(const std::string &name, int size) = 0;
+        virtual std::shared_ptr<UniformBlock> createUniformBlock(const std::string &name, int size) = 0;
         virtual std::shared_ptr<UniformSampler> createUniformSampler(const std::string &name, const TextureDesc &desc) = 0;
         // pipeline
         void beginRenderPass(std::shared_ptr<FrameBuffer> &frameBuffer, const ClearStates &states) override;
@@ -36,7 +36,7 @@ namespace SoftGL
 
     private:
         VertexArrayObjectOpenGL *vao_ = nullptr;
-        ShaderProgramOpenGL *shaderProgram = nullptr;
+        ShaderProgramOpenGL *shaderProgram_ = nullptr;
         PipelineStates *pipelineStates_ = nullptr;
     };
 }

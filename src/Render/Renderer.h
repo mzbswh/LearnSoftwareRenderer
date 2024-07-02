@@ -39,7 +39,7 @@ namespace SoftGL
         virtual std::shared_ptr<PipelineStates> createPipelineStates(const RenderStates &renderStates) = 0;
 
         // uniform
-        virtual std::shared_ptr<UniformBlock> createUnifromBlock(const std::string &name, int size) = 0;
+        virtual std::shared_ptr<UniformBlock> createUniformBlock(const std::string &name, int size) = 0;
         virtual std::shared_ptr<UniformSampler> createUniformSampler(const std::string &name, const TextureDesc &desc) = 0;
 
         // pipeline

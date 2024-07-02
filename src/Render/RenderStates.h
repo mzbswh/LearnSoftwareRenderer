@@ -51,7 +51,7 @@ namespace SoftGL
         BlendFunction blendFuncRgb = BlendFunc_ADD;
         BlendFactor blendSrcRgb = BlendFactor_ONE;
         BlendFactor blendDstRgb = BlendFactor_ZERO;
-        BlendFunction blendFuncAlphs = BlendFunc_ADD;
+        BlendFunction blendFuncAlpha = BlendFunc_ADD;
         BlendFactor blendSrcAlpha = BlendFactor_ONE;
         BlendFactor blendDstAlpha = BlendFactor_ZERO;
 
@@ -66,7 +66,7 @@ namespace SoftGL
         void SetBlendFunc(BlendFunction func)
         {
             blendFuncRgb = func;
-            blendFuncAlphs = func;
+            blendFuncAlpha = func;
         }
     };
 
