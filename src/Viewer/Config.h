@@ -34,7 +34,7 @@ namespace SoftGL
             bool showFloor = true;
 
             bool shadowMap = true;
-            bool pbrIbl = false;
+            bool pbrIbl = false;    // Image Based Lighting
             bool mipmaps = false;
 
             bool cullFace = true;
