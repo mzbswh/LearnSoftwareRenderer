@@ -28,7 +28,7 @@ namespace SoftGL
 
             size_t triangleCount_ = 0;
 
-            bool writeFrame = false;
+            bool wireframe = false;
             bool worldAxis = true;
             bool showSkybox = false;
             bool showFloor = true;
