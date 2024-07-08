@@ -83,7 +83,7 @@ namespace SoftGL
         {
             std::string resourcePath;
             ModelNode rootNode;
-            BoundingBox rootAABBl;
+            BoundingBox rootAABB;
 
             size_t meshCnt = 0;
             size_t primitiveCnt = 0;
