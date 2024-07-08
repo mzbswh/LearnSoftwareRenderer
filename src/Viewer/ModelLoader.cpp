@@ -258,5 +258,115 @@ namespace SoftGL
             }
             return true;
         }
+
+        bool ModelLoader::processMesh(const aiMesh *ai_mesh, const aiScene *ai_scene, ModelMesh &outMesh)
+        {
+            std::vector<Vertex> vertexes;
+            std::vector<int> indices;
+            for (size_t i = 0; i < ai_mesh->mNumVertices; i++)
+            {
+                Vertex vertex{};
+                if (ai_mesh->HasPositions())
+                {
+                    vertex.a_position.x = ai_mesh->mVertices[i].x;
+                    vertex.a_position.y = ai_mesh->mVertices[i].y;
+                    vertex.a_position.z = ai_mesh->mVertices[i].z;
+                }
+                if (ai_mesh->HasTextureCoords(0))
+                {
+                    vertex.a_texcoord.x = ai_mesh->mTextureCoords[0][i].x;
+                    vertex.a_texcoord.y = ai_mesh->mTextureCoords[0][i].y;
+                }
+                else
+                {
+                    vertex.a_texcoord = glm::vec2(0.0f, 0.0f);
+                }
+                if (ai_mesh->HasNormals())
+                {
+                    vertex.a_normal.x = ai_mesh->mNormals[i].x;
+                    vertex.a_normal.y = ai_mesh->mNormals[i].y;
+                    vertex.a_normal.z = ai_mesh->mNormals[i].z;
+                }
+                if (ai_mesh->HasTangentsAndBitangents())
+                {
+                    vertex.a_tangent.x = ai_mesh->mTangents[i].x;
+                    vertex.a_tangent.y = ai_mesh->mTangents[i].y;
+                    vertex.a_tangent.z = ai_mesh->mTangents[i].z;
+                }
+                vertexes.push_back(vertex);
+            }
+            for (size_t i = 0; i < ai_mesh->mNumFaces; i++)
+            {
+                aiFace face = ai_mesh->mFaces[i];
+                if (face.mNumIndices != 3)
+                {
+                    LOGE("ModelLoader::processMesh, mesh not tranformed to triangle mesh.");
+                    return false;
+                }
+                for (size_t j = 0; j < face.mNumIndices; j++)
+                {
+                    indices.push_back(face.mIndices[j]);
+                }
+            }
+            outMesh.material = std::make_shared<Material>();
+            outMesh.material->baseColor = glm::vec4(1.f);
+            if (ai_mesh->mMaterialIndex >= 0)
+            {
+                const aiMaterial *material = ai_scene->mMaterials[ai_mesh->mMaterialIndex];
+                // alpha mode
+                outMesh.material->alphaMode = Alpha_Opaque;
+                aiString alphaMode;
+                if (material->Get(AI_MATKEY_GLTF_ALPHAMODE, alphaMode) == aiReturn_SUCCESS)
+                {
+                    // "Mask" is not supported
+                    if (aiString("BLEND") == alphaMode)
+                    {
+                        outMesh.material->alphaMode = Alpha_Blend;
+                    }
+                }
+                // double side
+                outMesh.material->doubleSided = false;
+                bool doubleside;
+                if (material->Get(AI_MATKEY_TWOSIDED, doubleside) == aiReturn_SUCCESS)
+                {
+                    outMesh.material->doubleSided = doubleside;
+                }
+                // shading mode
+                outMesh.material->shadingModel = Shading_BlinnPhong;
+                aiShadingMode shading_mode;
+                if (material->Get(AI_MATKEY_SHADING_MODEL, shading_mode) == aiReturn_SUCCESS)
+                {
+                    if (aiShadingMode_PBR_BRDF == shading_mode)
+                    {
+                        outMesh.material->shadingModel = Shading_PBR;
+                    }
+                }
+                for (int i = 0; i <= AI_TEXTURE_TYPE_MAX; i++)
+                {
+                    processMaterial(material, static_cast<aiTextureType>(i), *outMesh.material);
+                }
+            }
+            outMesh.primitiveType = Primitive_TRIANGLE;
+            outMesh.primitiveCnt = ai_mesh->mNumFaces;
+            outMesh.vertexes = std::move(vertexes);
+            outMesh.indices = std::move(indices);
+            outMesh.aabb = convertBoundingBox(ai_mesh->mAABB);
+            outMesh.InitVertexes();
+            return true;
+        }
+
+        void ModelLoader::processMaterial(const aiMaterial *ai_material, aiTextureType textureType, Material &material)
+        {
+            if (ai_material->GetTextureCount(textureType) <= 0)
+            {
+                return;
+            }
+            for (size_t i = 0; i < ai_material->GetTextureCount(textureType); i++)
+            {
+                aiTextureMapMode texMapMode[2];     // [u, v]
+                aiString texPath;
+                
+            }
+        }
     }
 }
