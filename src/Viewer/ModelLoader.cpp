@@ -365,8 +365,164 @@ namespace SoftGL
             {
                 aiTextureMapMode texMapMode[2];     // [u, v]
                 aiString texPath;
-                
+                aiReturn retstatus = ai_material->GetTexture(textureType, i, &texPath, nullptr, nullptr, nullptr, nullptr, &texMapMode[0]);
+                if (retStatus != aiReturn_SUCCESS || texPath.length == 0)
+                {
+                    LOGE("load texture type=%d, index=%d failed with return value=%d", textureType, i, retstatus);
+                    continue;
+                }
+                std::string absolutePath = scene_.model->resourcePath + "/" + texPath.C_Str();
+                MaterialTexType texType = MaterialTexType_None;
+                switch (textureType)
+                {
+                    case aiTextureType_BASE_COLOR:
+                    case aiTextureType_DIFFUSE:
+                        texType = MaterialTexType_ALBEDO;
+                        break;
+                    case aiTextureType_NORMALS:
+                        texType = MaterialTexType_NORMAL;
+                        break;
+                    case aiTextureType_EMISSIVE:
+                        texType = MaterialTexType_EMISSIVE;
+                        break;
+                    case aiTextureType_LIGHTMAP:
+                        texType = MaterialTexType_AMBIENT_OCCLUSION;
+                        break;
+                    case aiTextureType_UNKNOWN:
+                        texType = MaterialTexType_METAL_ROUGHNESS;
+                        break;
+                    default:
+                        continue; // notsupport
+                }
+                auto buffer = loadTextureFile(absolutePath);
+                if (buffer)
+                {
+                    auto &texData = material.textureData[texType];
+                    texData.tag = absolutePath;
+                    texData.width = buffer->getWidth();
+                    texData.height = buffer->getHeight();
+                    texData.data = {buffer};
+                    texData.wrapModeU = convertTexWrapMode(texMapMode[0]);
+                    texData.wrapModeV = convertTexWrapMode(texMapMode[1]);
+                }
+                else
+                {
+                    LOGE("load texture file failed: %s, path: %s", Material::materialTexTypeStr(texType), absolutePath.c_str());
+                }
             }
+        }
+
+        glm::mat4 ModelLoader::convertMatrix(const aiMatrix4x4 &m)
+        {
+            glm::mat4 ret;
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    ret[j][i] = m[i][j];
+                }
+            }
+            return ret;
+        }
+
+        BoundingBox ModelLoader::convertBoundingBox(const aiAABB &aabb)
+        {
+            BoundingBox ret{};
+            ret.min = glm::vec3(aabb.mMin.x, aabb.mMin.y, aabb.mMin.z);
+            ret.max = glm::vec3(aabb.mMax.x, aabb.mMax.y, aabb.mMax.z);
+            return ret;
+        }
+
+        WrapMode ModelLoader::convertTexWrapMode(const aiTextureMapMode &mode)
+        {
+            WrapMode ret;
+            switch (mode)
+            {
+                case aiTextureMapMode_Wrap:
+                    ret = Wrap_REPEAT;
+                    break;
+                case aiTextureMapMode_Clamp:
+                    ret = Wrap_CLAMP_TO_EDGE;
+                    break;
+                case aiTextureMapMode_Mirror:
+                    ret = Wrap_MIRRORED_REPEAT;
+                    break;
+                default:
+                    ret = Wrap_REPEAT;
+                    break;
+            }
+            return ret;
+        }
+
+        glm::mat4 ModelLoader::adjustModelCenter(BoundingBox &bounds)
+        {
+            glm::mat4 modelTransform(1.0f);
+            glm::vec3 trans = (bounds.min + bounds.max) / -2.f;
+            trans.y = -bounds.min.y;
+            float bounds_len = glm::length(bounds.max - bounds.min);
+            modelTransform = glm::scale(modelTransform, glm::vec3(3.f / bounds_len));
+            modelTransform = glm::translate(modelTransform, trans);
+            return modelTransform;
+        }
+
+        void ModelLoader::preloadTextureFiles(const aiScene *scene, const std::string &resDir)
+        {
+            std::set<std::string> texPaths;
+            for (int materialIdx = 0; materialIdx < scene->mNumMaterials; materialIdx++)
+            {
+                aiMaterial *material = scene->mMaterials[materialIdx];
+                for (int texType = aiTextureType_NONE; texType <= AI_TEXTURE_TYPE_MAX; texType++)
+                {
+                    auto textureType = static_cast<aiTextureType>(texType);
+                    size_t texCnt = material->GetTextureCount(textureType);
+                    for (size_t i = 0; i < texCnt; i++)
+                    {
+                        aiString texPath;
+                        aiReturn retStatus = material->GetTexture(textureType, i, &texPath);
+                        if (retStatus != aiReturn_SUCCESS || texPath.length == 0)
+                        {
+                            continue;
+                        }
+                        texPaths.insert(resDir + "/" + texPath.C_Str());
+                    }
+                }
+            }
+            if (texPaths.empty())
+            {
+                return;
+            }
+            ThreadPool pool(std::min(texPaths.size(), (size_t)std::thread::hardware_concurrency()));
+            for (auto &path : texPaths)
+            {
+                pool.pushTask([&](const int thread_id) 
+                            { 
+                                loadTextureFile(path); 
+                            }
+                );
+            }
+        }
+
+        std::shared_ptr<Buffer<RGBA>> ModelLoader::loadTextureFile(const std::string &path)
+        {
+            texCacheMutex_.lock();
+            if (textureDataCache_.find(path) != textureDataCache_.end())
+            {
+                auto &buffer = textureDataCache_[path];
+                texCacheMutex_.unlock();
+                return buffer;
+            }
+            texCacheMutex_.unlock();
+            LOGD("load texture file: %s", path.c_str());
+            auto buffer = ImageUtils::readImageRGBA(path);
+            if (buffer == nullptr)
+            {
+                LOGD("load texture file failed: %s", path.c_str());
+                return nullptr;
+            }
+            texCacheMutex_.lock();
+            textureDataCache_[path] = buffer;
+            texCacheMutex_.unlock();
+            return buffer;
         }
     }
 }
