@@ -48,9 +48,10 @@ namespace SoftGL
         void procesViewportTransform();
         void processFaceCulling();
         void processRasterization();
-        void processFragmentShader(glm::vec4 &screenPos, bool frontFacing, void *varyings, ShaderProgram *shader);
+        void processFragmentShader(glm::vec4 &screenPos, bool frontFacing, void *varyings, ShaderProgramSoft *shader);
         void processPerSampleOperations(int x, int y, float depth, const glm::vec4 &color, int sample);
-        bool processColorBlending(int x, int y, glm::vec4 &color, int sample);
+        bool processDepthTest(int x, int y, float depth, int sample, bool skipWirte);
+        void processColorBlending(int x, int y, glm::vec4 &color, int sample);
 
         void processPointAssembly();
         void processLineAssembly();
@@ -99,12 +100,12 @@ namespace SoftGL
         ShaderProgramSoft *shaderProgram_ = nullptr;
         std::shared_ptr<ImageBufferSoft<RGBA>> fboColor_ = nullptr;
         std::shared_ptr<ImageBufferSoft<float>> fboDepth_ = nullptr;
-        std::vector<VertexHolder> vertex_;
+        std::vector<VertexHolder> vertexes_;
         std::vector<PrimitiveHolder> primitives_;
         std::shared_ptr<float> varyings_ = nullptr;
-        size_t varyingsCnt = 0;
+        size_t varyingsCnt_ = 0;
         size_t varyingsAlignedCnt_ = 0;
-        size_t varyingsAlgnedSize_ = 0;
+        size_t varyingsAlignedSize_ = 0;
         float pointSize_ = 1.0f;
         bool earlyZ_ = true;
         int rasterSamples_ = 1;
