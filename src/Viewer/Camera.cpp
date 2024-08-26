@@ -64,7 +64,7 @@ namespace SoftGL
             return view;
         }
 
-        glm::vec3 Camera::getWorldPositionFormView(glm::vec3 pos) const
+        glm::vec3 Camera::getWorldPositionFromView(glm::vec3 pos) const
         {
             glm::mat4 proj, view, projInv, viewInv;
             proj = projectionMatrix();

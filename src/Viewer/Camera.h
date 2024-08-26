@@ -26,7 +26,7 @@ namespace SoftGL
 
             glm::mat4 projectionMatrix() const;
             glm::mat4 viewMatrix() const;
-            glm::vec3 getWorldPositionFormView(glm::vec3 pos) const;
+            glm::vec3 getWorldPositionFromView(glm::vec3 pos) const;
 
             inline const Frustum& getFrustum() const { return frustum_; }
 
