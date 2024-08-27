@@ -6,7 +6,7 @@
 #include "VertexOpenGL.h"
 #include "VertexOpenGL.h"
 
-#define GL_StATE_SET(var, gl_state) if (var) GL_CHECK(glEnable(gl_state)); else GL_CHECK(glDisable(gl_state));
+#define GL_STATE_SET(var, gl_state) if (var) GL_CHECK(glEnable(gl_state)); else GL_CHECK(glDisable(gl_state));
 
 namespace SoftGL
 {
@@ -110,7 +110,7 @@ namespace SoftGL
         pipelineStates_ = states.get();
         auto &renderStates = states->renderStates;
         // blend
-        GL_StATE_SET(renderStates.blend, GL_BLEND);
+        GL_STATE_SET(renderStates.blend, GL_BLEND);
         GL_CHECK(glBlendEquationSeparate(OpenGL::cvtBlendFunction(renderStates.blendParams.blendFuncRgb),
                                          OpenGL::cvtBlendFunction(renderStates.blendParams.blendFuncAlpha)));
         GL_CHECK(glBlendFuncSeparate(OpenGL::cvtBlendFactor(renderStates.blendParams.blendSrcRgb),
@@ -118,11 +118,11 @@ namespace SoftGL
                                      OpenGL::cvtBlendFactor(renderStates.blendParams.blendSrcAlpha),
                                      OpenGL::cvtBlendFactor(renderStates.blendParams.blendDstAlpha)));
         // depth
-        GL_StATE_SET(renderStates.depthTest, GL_DEPTH_TEST);
+        GL_STATE_SET(renderStates.depthTest, GL_DEPTH_TEST);
         GL_CHECK(glDepthMask(renderStates.depthMask));
         GL_CHECK(glDepthFunc(OpenGL::cvtDepthFunc(renderStates.depthFunc)));
 
-        GL_StATE_SET(renderStates.cullFace, GL_CULL_FACE);  // 背面剔除
+        GL_STATE_SET(renderStates.cullFace, GL_CULL_FACE);  // 背面剔除
         GL_CHECK(glPolygonMode(GL_FRONT_AND_BACK, OpenGL::cvtPolygonMode(renderStates.polygonMode)));
 
         GL_CHECK(glLineWidth(renderStates.lineWidth));
