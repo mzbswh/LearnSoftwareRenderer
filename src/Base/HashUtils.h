@@ -9,7 +9,7 @@ namespace SoftGL
     {
     public:
         template <class T>
-        inline static void hashCombie(size_t &seed, T const &v)
+        inline static void hashCombine(size_t &seed, T const &v)
         {
             seed ^= std::hash<T>()(v) + 0x9e3779b9u + (seed << 6u) + (seed >> 2u);
         }

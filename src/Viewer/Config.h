@@ -9,7 +9,7 @@ namespace SoftGL
     namespace View
     {
         const std::string ASSETS_DIR = "./assets/";
-        const std::string Shader_GLSL_DIR = "./shaders/GLSL/";
+        const std::string SHADER_GLSL_DIR = "./shaders/GLSL/";
 
         enum AAType
         {

@@ -63,7 +63,7 @@ namespace SoftGL
 
             void setupVertexArray(ModelVertexes &vertexes);
             void setupTextures(Material &material);
-            void setupShaderProgram(Material &material, ShadingModel shading);
+            bool setupShaderProgram(Material &material, ShadingModel shading);
             void setupSamplerUniforms(Material &material);
             void setupPipelineStates(ModelBase &model, const std::function<void(RenderStates &rs)> &extraStates);
             void setupMaterial(ModelBase &model, ShadingModel shading, const std::set<int> &uniformBlocks, const std::function<void(RenderStates &rs)> &extraStates);
@@ -74,12 +74,13 @@ namespace SoftGL
 
             inline SkyboxMaterial *getSkyboxMaterial();
             bool initSkyboxIBL();
-            void updateIBLTextures(MaterialObject &materialObject);
-            void updateShadowTextures(MaterialObject &materialObject, bool shadowPass);
+            bool iBLEnabled();
+            void updateIBLTextures(MaterialObject *materialObject);
+            void updateShadowTextures(MaterialObject *materialObject, bool shadowPass);
 
             static std::set<std::string> generateShaderDefines(Material &material);
             static size_t getShaderProgramCacheKey(ShadingModel shading, const std::set<std::string> &defines);
-            static size_t getPipelineStatesCacheKey(Material &material, const RenderStates &rs);
+            static size_t getPipelineCacheKey(Material &material, const RenderStates &rs);
 
             std::shared_ptr<Texture> createTextureCubeDefault(int width, int height, uint32_t usage, bool mipmaps = false);
             std::shared_ptr<Texture> createTexture2DDefault(int width, int height, TextureFormat format, uint32_t usage, bool mipmaps = false); 
