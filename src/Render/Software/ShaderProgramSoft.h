@@ -20,7 +20,7 @@ namespace SoftGL
             defines_.emplace_back(def);
         }
 
-        bool SetShader(std::shared_ptr<ShaderSoft> vs, std::shared_ptr<ShaderSoft> fs)
+        bool SetShaders(std::shared_ptr<ShaderSoft> vs, std::shared_ptr<ShaderSoft> fs)
         {
             vertexShader_ = std::move(vs);
             fragmentShader_ = std::move(fs);
